@@ -35,15 +35,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMapLongClickListener(myListener)
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener{
             override fun onLocationChanged(location: Location?) {
 
                 if (location != null){
-                    mMap.clear()
-                    val newUserlocation = LatLng(location.latitude,location.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newUserlocation,15f))
+
+                    val sharedPreferences = this@MapsActivity.getSharedPreferences("com.saglamorhan.travelbook",Context.MODE_PRIVATE)
+                    val firstTimeCheck = sharedPreferences.getBoolean("notFirstTime",false)
+                    if (!firstTimeCheck){
+                        mMap.clear()
+                        val newUserlocation = LatLng(location.latitude,location.longitude)
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newUserlocation,15f))
+                        sharedPreferences.edit().putBoolean("notFirstTime",true).apply()
+                    }
+
                 }
             }
 
@@ -74,6 +82,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    val myListener = object :GoogleMap.OnMapLongClickListener{
+        override fun onMapLongClick(p0: LatLng?) {
+            TODO("Not yet implemented")
+        }
+
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
