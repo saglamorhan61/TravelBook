@@ -123,9 +123,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     try {
 
-                        val database=openOrCreateDatabase("Place",Context.MODE_PRIVATE,null)
+                        val database=openOrCreateDatabase("Places",Context.MODE_PRIVATE,null)
                         database.execSQL("CREATE TABLE IF NOT EXISTS places (address VARCHAR, latitude DOUBLE, longitude DOUBLE)")
-                        val toCompile = "INSERT INTO places (name, latitude,longitude) VALUES (?, ?, ?)"
+                        val toCompile = "INSERT INTO places (address, latitude,longitude) VALUES (?, ?, ?)"
                         val sqListeStatement = database.compileStatement(toCompile)
                         sqListeStatement.bindString(1,newPlace.address)
                         sqListeStatement.bindDouble(2,newPlace.latitude!!)
