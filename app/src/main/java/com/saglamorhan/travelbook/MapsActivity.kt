@@ -112,13 +112,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.clear()
                 mMap.addMarker(MarkerOptions().position(p0).title(address))
 
+                val newPlace = Place(address,p0.latitude,p0.longitude)
+
                 val dialog = AlertDialog.Builder(this@MapsActivity)
                 dialog.setCancelable(false)
                 dialog.setTitle("Are you sure?")
-                dialog.setMessage(address)
+                dialog.setMessage(newPlace.address)
                 dialog.setPositiveButton("Yes"){dialog,which ->
                     //SQLite SAVE
 
+                    try {
+
+                        val database=openOrCreateDatabase("Place",Context.MODE_PRIVATE,null)
+                        database.execSQL("CREATE TABLE IF NOT EXISTS places (address VARCHAR, latitude DOUBLE, longitude DOUBLE)")
+                        val toCompile = "INSERT INTO places (name, latitude,longitude) VALUES (?, ?, ?)"
+                        val sqListeStatement = database.compileStatement(toCompile)
+                        sqListeStatement.bindString(1,newPlace.address)
+                        sqListeStatement.bindDouble(2,newPlace.latitude!!)
+                        sqListeStatement.bindDouble(3, newPlace.longitude!!)
+                        sqListeStatement.execute()
+
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
+                    Toast.makeText(this@MapsActivity,"New Place Created",Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No"){dialog,which->
                     Toast.makeText(this@MapsActivity,"Canceled!",Toast.LENGTH_LONG).show()
 
