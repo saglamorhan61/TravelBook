@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.add_place_option){
 
             val intent = Intent(applicationContext,MapsActivity::class.java)
+            intent.putExtra("info","new")
             startActivity(intent)
         }
 
@@ -60,5 +61,13 @@ class MainActivity : AppCompatActivity() {
         }
         val customAdapter = CustomAdapter(placesArray,this)
         listView.adapter = customAdapter
+        listView.setOnItemClickListener { parent, view, position, id ->
+
+            val intent = Intent(this,MapsActivity::class.java)
+            intent.putExtra("info","old")
+            intent.putExtra("selectedPlace",placesArray.get(position))
+            startActivity(intent)
+
+        }
     }
 }

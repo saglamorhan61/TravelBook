@@ -2,6 +2,7 @@ package com.saglamorhan.travelbook
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -35,6 +36,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        val intentToMain = Intent(this,MainActivity::class.java)
+        startActivity(intentToMain)
+        finish()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -78,11 +87,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }else{
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2,2f,locationListener)
 
-            val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (lastLocation != null){
-                val lastLocationLatLng = LatLng(lastLocation.latitude,lastLocation.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocationLatLng,15f))
+            val intent = intent
+            val info = intent.getStringExtra("info")
+
+            if (info.equals("new")){
+                val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (lastLocation != null){
+                    val lastLocationLatLng = LatLng(lastLocation.latitude,lastLocation.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocationLatLng,15f))
+                }
+            }else{
+                mMap.clear()
+                val selectedPlace = intent.getSerializableExtra("selectedPlace") as Place
+                val selectedLoaction = LatLng(selectedPlace.latitude!!,selectedPlace.longitude!!)
+                mMap.addMarker(MarkerOptions().title(selectedPlace.address).position(selectedLoaction))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLoaction,15f))
+
             }
+
+
         }
     }
 
