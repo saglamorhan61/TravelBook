@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    var placesArray = ArrayList<Place>()
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 val longitudeFromDatabase = cursor.getDouble(longitudeIndex)
 
                 val myPlace = Place(addressFromDatabase,latitudeFromDatabase,longitudeFromDatabase)
-                println(myPlace.address)
+                placesArray.add(myPlace)
 
             }
             cursor.close()
@@ -55,5 +58,7 @@ class MainActivity : AppCompatActivity() {
         }catch (e:Exception){
             e.printStackTrace()
         }
+        val customAdapter = CustomAdapter(placesArray,this)
+        listView.adapter = customAdapter
     }
 }
